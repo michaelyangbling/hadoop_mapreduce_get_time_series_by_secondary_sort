@@ -25,7 +25,7 @@ class groupComparator{
 }
 
 class reducer{
-   reduce( [station, year ] [ ..., [ (min temp, 1or0), (max temp, 1or0) ], ...]
+   reduce( [station, year ] [ ..., [ (min temp, 1or0), (max temp, 1or0),year ], ...] )
      emit( station, [year1, mean min temp, min max temp],
       [year2, mean min temp, min max temp],
       ... )
@@ -128,7 +128,11 @@ public class sort2nd {
 
     public static class myReducer
             extends Reducer<staYear,info,Text,Text> {
+        //a reduce function will call ( [station, year ] [ ..., [ (min temp, 1or0), (max temp, 1or0) , year], ...] ) for every station,
+        // since groupComparator  compare only by station, not considering year.
 
+        //Also, since key comparator is by station and year,
+        // in each reduce call values will be in the year order in the input list.
         public void reduce(staYear key, Iterable<info> iterable,
                            Context context
         ) throws IOException, InterruptedException {// seems hadoop is strange with multiple iterators
