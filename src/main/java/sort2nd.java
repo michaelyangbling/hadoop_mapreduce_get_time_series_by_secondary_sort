@@ -12,6 +12,25 @@ import org.apache.hadoop.io.*;
 
 import org.apache.hadoop.mapreduce.Partitioner;
 
+/*Pseudo code
+class mapper {
+   map(line, text){
+   emit( [ station, year ], [ (min temp, 1 or 0), (max temp, 1 or 0) ,year ] )
+   }
+class partitioner{
+   partition by station}
+
+class groupComparator{
+   compare only by station
+}
+
+class reducer{
+   reduce( [station, year ] [ ..., [ (min temp, 1or0), (max temp, 1or0) ], ...]
+     emit( station, [year1, mean min temp, min max temp],
+      [year2, mean min temp, min max temp],
+      ... )
+key comparator is by station and year ( defined by compareTo in staYear )
+*/
 
 
 class staYear implements WritableComparable<staYear> {
@@ -54,7 +73,7 @@ class info implements Writable {
         year=in.readInt();
 
     }
-}//define a custom value
+}//define a custom value( Count_max, Sum_max, Count_min, Sum_min, year )
 public class sort2nd {
 
     public static int compare(int a,int b){
@@ -114,8 +133,7 @@ public class sort2nd {
                            Context context
         ) throws IOException, InterruptedException {// seems hadoop is strange with multiple iterators
             int count_max=0;int count_min = 0;
-            float sum_max=0;float sum_min=0;  //int i=0;
-            //for (info val : values){size+=1;}
+            float sum_max=0;float sum_min=0;
             List<info> values=new ArrayList<info>();
             info copy;
             for(info val : iterable){//hadoop use same object for Iterable, so must make copy
